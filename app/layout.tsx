@@ -14,10 +14,16 @@ const geistMono = Geist_Mono({
 
 // Fonte de personalidade da home (ficha/placa de identificação) — ver
 // app/page.tsx. Usada apenas nos títulos, não substitui a Geist no corpo.
+// adjustFontFallback desativado: o Next não tem métricas conhecidas para
+// esta fonte pra gerar um fallback ajustado automaticamente (gera só um
+// warning inofensivo no build); fallback manual cobre o intervalo até a
+// fonte carregar.
 const stencil = Big_Shoulders_Stencil({
   variable: "--font-stencil",
   weight: "800",
   subsets: ["latin"],
+  adjustFontFallback: false,
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const description =
