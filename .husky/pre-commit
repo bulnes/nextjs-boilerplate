@@ -1,0 +1,8 @@
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact -v
+else
+  echo "⚠ gitleaks não encontrado localmente — instale-o (https://github.com/gitleaks/gitleaks) para checagem de segredos no pre-commit. O CI ainda bloqueia o merge mesmo sem isso."
+fi
+
+npx lint-staged
+npm run typecheck
