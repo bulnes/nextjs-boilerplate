@@ -11,7 +11,7 @@ Tailwind CSS + shadcn/ui, DevSecOps no CI/CD e estrutura de dados via Supabase +
 - **Qualidade**: ESLint (+ `jsx-a11y` estrito) + Prettier, Husky + lint-staged, `tsc --noEmit`
 - **Testes**: Vitest + React Testing Library (unitário/componente), Playwright (E2E)
 - **Catálogo de componentes**: Storybook, com gerador padronizado (`plop`)
-- **Segurança**: cabeçalhos HTTP restritivos (CSP com nonce, HSTS, X-Frame-Options, X-Content-Type-Options),
+- **Segurança**: cabeçalhos HTTP restritivos (CSP estática sem nonce, HSTS, X-Frame-Options, X-Content-Type-Options),
   verificação de segredos (`gitleaks`), auditoria de dependências (`npm audit`), rate limiting em memória,
   validação de entrada com Zod, sessão via cookies estritos (`@supabase/ssr`)
 - **Banco de dados**: Supabase (Postgres) com Row Level Security default-deny + Drizzle ORM
@@ -67,8 +67,12 @@ nome falha em vez de sobrescrever.
 
 ## Segurança
 
-- Toda resposta HTTP inclui `Content-Security-Policy` (com nonce por requisição), `Strict-Transport-Security`,
-  `X-Frame-Options: DENY` e `X-Content-Type-Options: nosniff` (ver `next.config.ts` e `proxy.ts`).
+- Toda resposta HTTP inclui `Content-Security-Policy`, `Strict-Transport-Security`,
+  `X-Frame-Options: DENY` e `X-Content-Type-Options: nosniff` (ver `next.config.ts`). A CSP é
+  estática (sem nonce por requisição) e usa `script-src 'self' 'unsafe-inline'` — o nonce
+  automático documentado pelo Next.js para scripts inline de hidratação não funcionou na prática
+  em testes manuais com esta versão (16.3.4); ver a decisão e o teste documentados em
+  `specs/003-nextjs-boilerplate-hardening/research.md` §11.
 - Commits e Pull Requests são verificados contra vazamento de segredos (`gitleaks`) e vulnerabilidades
   de dependência High/Critical (`npm audit`), localmente (hook de pre-commit) e no CI.
 - Todo input de usuário é validado com Zod antes de qualquer regra de negócio (ver `app/api/example/route.ts`
@@ -85,6 +89,9 @@ padrão**. Para desenvolvimento com um banco real:
 3. `npm run db:seed` para popular o estado inicial (útil para reiniciar o estado antes de rodar testes).
 
 Row Level Security é habilitado por padrão em modo de negação total (default deny) — ver `supabase/policies/example.sql`.
+Esse RLS protege o acesso feito diretamente via client Supabase (PostgREST, papéis `anon`/`authenticated`). A conexão
+usada pelo Drizzle (`DATABASE_URL`) usa um papel privilegiado do Postgres e **não passa pelo RLS**; nesse caminho,
+a autorização é responsabilidade do código da aplicação (ver a checagem de sessão em `app/api/example/route.ts`).
 
 ## Estrutura
 

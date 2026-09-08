@@ -8,6 +8,12 @@
 --
 -- Rode este arquivo depois da migration gerada pelo Drizzle
 -- (db/migrations/0000_fair_captain_cross.sql) ter sido aplicada.
+--
+-- Escopo: este RLS protege o acesso feito diretamente via client Supabase
+-- (PostgREST, papéis `anon`/`authenticated`). A conexão usada pelo Drizzle
+-- em runtime (DATABASE_URL, ver db/client.ts) usa um papel privilegiado do
+-- Postgres e não passa por estas policies — a autorização nesse caminho é
+-- responsabilidade do código da aplicação.
 
 ALTER TABLE "example_items" ENABLE ROW LEVEL SECURITY;
 
