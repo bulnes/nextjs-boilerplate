@@ -17,8 +17,6 @@ import { authRateLimiter } from "@/lib/rate-limit";
  * usar CSP baseada em nonce nesta versão do Next.js.
  */
 export async function proxy(request: NextRequest) {
-  const response = NextResponse.next();
-
   if (request.nextUrl.pathname.startsWith("/api/example")) {
     const ip = request.headers.get("x-forwarded-for") ?? "unknown";
     const { allowed, retryAfterMs } = authRateLimiter.check(`${ip}:${request.nextUrl.pathname}`);
@@ -35,6 +33,8 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  let response = NextResponse.next({ request });
+
   const supabase = createServerClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
     env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -44,8 +44,16 @@ export async function proxy(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
+          // Escreve no `request` e reconstrói o `response` a partir dele para
+          // que o cookie de sessão atualizado (refresh) seja visto pelo
+          // Route Handler dentro do mesmo ciclo de requisição — sem isso, o
+          // handler lê os cookies originais (pré-refresh) via next/headers.
           for (const { name, value } of cookiesToSet) {
-            response.cookies.set(name, value);
+            request.cookies.set(name, value);
+          }
+          response = NextResponse.next({ request });
+          for (const { name, value, options } of cookiesToSet) {
+            response.cookies.set(name, value, options);
           }
         },
       },
