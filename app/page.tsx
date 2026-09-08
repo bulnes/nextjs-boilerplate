@@ -1,6 +1,16 @@
+import { JsonLd } from "@/components/JsonLd/JsonLd";
+
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 px-6 py-24 text-center dark:bg-black">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "nextjs-boilerplate",
+          url: "https://example.com",
+        }}
+      />
       <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
         nextjs-boilerplate
       </h1>

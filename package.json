@@ -20,6 +20,7 @@
     "db:generate": "drizzle-kit generate --config db/drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config db/drizzle.config.ts",
     "db:seed": "tsx db/seed.ts",
+    "lhci": "lhci autorun",
     "prepare": "husky",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -41,6 +42,7 @@
     "zod": "4.5.4"
   },
   "devDependencies": {
+    "@lhci/cli": "0.15.1",
     "@playwright/test": "1.63.0",
     "@storybook/addon-a11y": "10.6.0",
     "@storybook/addon-docs": "10.6.0",

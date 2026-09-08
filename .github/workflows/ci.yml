@@ -58,6 +58,25 @@ jobs:
       - name: Audita dependências (falha em High/Critical)
         run: npm audit --omit=dev --audit-level=high
 
+  lighthouse:
+    name: Lighthouse CI (Performance/Acessibilidade/SEO ≥ 90)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - run: npm run lhci
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
   e2e:
     name: Testes E2E (Playwright)
     runs-on: ubuntu-latest
