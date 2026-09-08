@@ -57,30 +57,26 @@ export async function proxy(request: NextRequest) {
 
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          // Escreve no `request` e reconstrói o `response` a partir dele para
-          // que o cookie de sessão atualizado (refresh) seja visto pelo
-          // Route Handler dentro do mesmo ciclo de requisição — sem isso, o
-          // handler lê os cookies originais (pré-refresh) via next/headers.
-          for (const { name, value } of cookiesToSet) {
-            request.cookies.set(name, value);
-          }
-          response = NextResponse.next({ request });
-          for (const { name, value, options } of cookiesToSet) {
-            response.cookies.set(name, value, options);
-          }
-        },
+  const supabase = createServerClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        // Escreve no `request` e reconstrói o `response` a partir dele para
+        // que o cookie de sessão atualizado (refresh) seja visto pelo
+        // Route Handler dentro do mesmo ciclo de requisição — sem isso, o
+        // handler lê os cookies originais (pré-refresh) via next/headers.
+        for (const { name, value } of cookiesToSet) {
+          request.cookies.set(name, value);
+        }
+        response = NextResponse.next({ request });
+        for (const { name, value, options } of cookiesToSet) {
+          response.cookies.set(name, value, options);
+        }
       },
     },
-  );
+  });
 
   // Dispara o refresh de sessão (se necessário); erros de rede/config não
   // devem derrubar a requisição — apenas seguem sem sessão válida.

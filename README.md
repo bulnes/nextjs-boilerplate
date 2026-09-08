@@ -84,7 +84,7 @@ nome falha em vez de sobrescrever.
 O client do Supabase e o schema do Drizzle estão estruturados, mas **nenhuma conexão real é feita por
 padrão**. Para desenvolvimento com um banco real:
 
-1. Preencha `DATABASE_URL` e as variáveis `NEXT_PUBLIC_SUPABASE_*`/`SUPABASE_SERVICE_ROLE_KEY` em `.env.local`.
+1. Preencha `DATABASE_URL` e as variáveis `SUPABASE_URL`/`SUPABASE_ANON_KEY`/`SUPABASE_SERVICE_ROLE_KEY` em `.env.local` (todas server-side, sem prefixo `NEXT_PUBLIC_` — este boilerplate não usa Supabase no browser).
 2. `npm run db:generate` para gerar/aplicar migrations.
 3. `npm run db:seed` para popular o estado inicial (útil para reiniciar o estado antes de rodar testes).
 
