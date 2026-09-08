@@ -16,9 +16,22 @@ import { authRateLimiter } from "@/lib/rate-limit";
  * next.config.ts, não aqui — ver research.md §11 sobre a decisão de não
  * usar CSP baseada em nonce nesta versão do Next.js.
  */
+/**
+ * IP do cliente usado como parte da chave do rate limit. Confia apenas no
+ * primeiro hop de `x-forwarded-for` (o mais próximo do cliente); sem um
+ * proxy/CDN confiável na frente da aplicação que reescreva esse header, o
+ * valor pode ser forjado por quem faz a requisição — mesma limitação já
+ * documentada em lib/rate-limit.ts para o backing store em memória.
+ */
+function getClientIp(request: NextRequest): string {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  const firstHop = forwardedFor?.split(",")[0]?.trim();
+  return firstHop || request.headers.get("x-real-ip") || "unknown";
+}
+
 export async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/api/example")) {
-    const ip = request.headers.get("x-forwarded-for") ?? "unknown";
+    const ip = getClientIp(request);
     const { allowed, retryAfterMs } = authRateLimiter.check(`${ip}:${request.nextUrl.pathname}`);
 
     if (!allowed) {

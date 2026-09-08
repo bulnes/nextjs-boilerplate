@@ -39,4 +39,17 @@ describe("InMemoryRateLimiter", () => {
 
     expect(limiter.check("key").allowed).toBe(true);
   });
+
+  it("remove entradas expiradas de chaves distintas ao varrer", async () => {
+    const limiter = new InMemoryRateLimiter(1, 10, 5);
+
+    for (let i = 0; i < 4; i += 1) {
+      limiter.check(`key-${i}`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    // A 5ª chamada dispara a varredura (sweepEvery=5) e remove as 4 chaves
+    // expiradas acima; a nova chave abaixo continua funcionando normalmente.
+    expect(limiter.check("key-trigger").allowed).toBe(true);
+  });
 });
