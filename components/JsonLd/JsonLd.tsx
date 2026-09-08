@@ -4,11 +4,13 @@ export interface JsonLdProps {
 
 /**
  * Publica um bloco de dados estruturados (schema.org) em JSON-LD (FR-021).
- * Renderizado no servidor — sem risco de XSS via JSON.stringify de um objeto
- * controlado pela aplicação (nunca passe dados brutos de usuário aqui).
+ * Renderizado no servidor — `<` é escapado no JSON serializado para impedir
+ * que um valor de string contendo `</script>` feche a tag antecipadamente
+ * (técnica padrão para injeção de JSON em `<script>`), então isto é seguro
+ * mesmo que `data` acabe incluindo algum texto de origem externa.
  */
 export function JsonLd({ data }: JsonLdProps) {
-  return (
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
-  );
+  const json = JSON.stringify(data).replace(/</g, "\\u003c");
+
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />;
 }
