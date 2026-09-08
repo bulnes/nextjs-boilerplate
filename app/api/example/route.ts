@@ -40,6 +40,11 @@ export async function POST(request: NextRequest) {
     .values({ ownerId: user.id, title: parsed.data.title })
     .returning({ id: exampleItems.id });
 
+  if (!item) {
+    logger.error("example_item_insert_failed");
+    return NextResponse.json({ error: "internal_error" }, { status: 500 });
+  }
+
   logger.info("example_item_created", { id: item.id });
   return NextResponse.json({ id: item.id }, { status: 201 });
 }
