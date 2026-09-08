@@ -4,6 +4,15 @@ on:
   pull_request:
     branches: [develop, main]
 
+# Valores de exemplo (não são credenciais reais) apenas para satisfazer a
+# validação estrita de env (lib/env.ts) durante build/start no CI — nenhuma
+# conexão real ao Supabase é feita neste pipeline (FR-028).
+env:
+  NEXT_PUBLIC_SUPABASE_URL: "https://ci-placeholder.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "ci-placeholder-anon-key"
+  SUPABASE_SERVICE_ROLE_KEY: "ci-placeholder-service-role-key"
+  DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
+
 jobs:
   lint-typecheck-test:
     name: Lint, typecheck, testes e build
@@ -25,6 +34,29 @@ jobs:
       - run: npm run test
 
       - run: npm run build
+
+  security:
+    name: Segredos e auditoria de dependências
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Verifica vazamento de segredos (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Audita dependências (falha em High/Critical)
+        run: npm audit --omit=dev --audit-level=high
 
   e2e:
     name: Testes E2E (Playwright)
