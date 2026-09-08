@@ -7,6 +7,10 @@ loadEnvConfig(process.cwd());
  * Uso: npm run db:seed
  */
 async function main() {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("db:seed apaga todos os dados de example_items — não rode em produção.");
+  }
+
   const { db } = await import("./client");
   const { exampleItems } = await import("./schema/example");
 
