@@ -30,7 +30,7 @@ const focusRing =
 
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col items-center bg-[#14171b] px-6 py-20 sm:py-28">
+    <main className="flex flex-1 flex-col items-center bg-[#14171b] px-6 py-20 sm:py-28">
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -103,9 +103,9 @@ export default function Home() {
         </dl>
       </section>
 
-      <footer className="mt-10 text-center text-xs text-[#5c6066]">
+      <footer className="mt-10 text-center text-xs text-[#8b9096]">
         Licenciado sob MIT. Bruno Bulnes, 2026.
       </footer>
-    </div>
+    </main>
   );
 }
