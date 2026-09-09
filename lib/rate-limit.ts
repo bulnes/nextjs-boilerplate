@@ -3,6 +3,12 @@ export interface RateLimitResult {
   retryAfterMs: number;
 }
 
+/**
+ * @public Contrato a implementar ao trocar o backing store (ver
+ * InMemoryRateLimiter abaixo) — nenhum código deste repo consome a
+ * interface diretamente além da própria implementação, mas é o ponto de
+ * extensão documentado para produção multi-instância (ex.: Redis/Upstash).
+ */
 export interface RateLimiter {
   check(key: string): RateLimitResult;
 }

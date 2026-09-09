@@ -30,6 +30,7 @@
     "db:seed": "tsx db/seed.ts",
     "lhci": "lhci autorun",
     "analyze": "next experimental-analyze",
+    "knip": "knip",
     "prepare": "husky",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -53,6 +54,7 @@
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
     "@lhci/cli": "0.15.1",
+    "@next/env": "16.3.4",
     "@playwright/test": "1.63.0",
     "@storybook/addon-a11y": "10.6.0",
     "@storybook/addon-docs": "10.6.0",
@@ -76,6 +78,7 @@
     "husky": "9.1.7",
     "jest-axe": "11.0.0",
     "jsdom": "30.0.1",
+    "knip": "6.35.0",
     "lint-staged": "17.5.0",
     "plop": "4.0.5",
     "prettier": "3.9.6",
