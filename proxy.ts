@@ -4,13 +4,14 @@ import type { NextRequest } from "next/server";
 
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
-import { authRateLimiter } from "@/lib/rate-limit";
+import { apiRateLimiter } from "@/lib/rate-limit";
 
 /**
  * Next.js 16 renomeou o arquivo/export `middleware` para `proxy` (mesma API
  * de NextRequest/NextResponse — ver research.md §11). Este arquivo:
  * 1. Atualiza (refresh) a sessão do Supabase via cookies (FR-017).
- * 2. Aplica rate limiting em rotas sensíveis de exemplo (FR-018).
+ * 2. Aplica rate limiting a toda rota sob /api/* por padrão (FR-018) — uma
+ *    rota de API nova já nasce protegida, sem precisar editar este arquivo.
  *
  * Os cabeçalhos de segurança estáticos (incluindo CSP) ficam em
  * next.config.ts, não aqui — ver research.md §11 sobre a decisão de não
@@ -30,9 +31,9 @@ function getClientIp(request: NextRequest): string {
 }
 
 export async function proxy(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/api/example")) {
+  if (request.nextUrl.pathname.startsWith("/api/")) {
     const ip = getClientIp(request);
-    const { allowed, retryAfterMs } = authRateLimiter.check(`${ip}:${request.nextUrl.pathname}`);
+    const { allowed, retryAfterMs } = apiRateLimiter.check(`${ip}:${request.nextUrl.pathname}`);
 
     if (!allowed) {
       logger.warn("rate_limit_blocked", { pathname: request.nextUrl.pathname });
