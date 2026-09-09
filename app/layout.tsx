@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Big_Shoulders_Stencil, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -10,6 +10,20 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Fonte de personalidade da home (ficha/placa de identificação) — ver
+// app/page.tsx. Usada apenas nos títulos, não substitui a Geist no corpo.
+// adjustFontFallback desativado: o Next não tem métricas conhecidas para
+// esta fonte pra gerar um fallback ajustado automaticamente (gera só um
+// warning inofensivo no build); fallback manual cobre o intervalo até a
+// fonte carregar.
+const stencil = Big_Shoulders_Stencil({
+  variable: "--font-stencil",
+  weight: "800",
+  subsets: ["latin"],
+  adjustFontFallback: false,
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const description =
@@ -34,7 +48,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html
+      lang="pt-BR"
+      className={`${geistSans.variable} ${geistMono.variable} ${stencil.variable} h-full antialiased`}
+    >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
