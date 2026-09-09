@@ -11,9 +11,11 @@ Tailwind CSS + shadcn/ui, DevSecOps no CI/CD e estrutura de dados via Supabase +
 - **Qualidade**: ESLint (+ `jsx-a11y` estrito) + Prettier, Husky + lint-staged, `tsc --noEmit`
 - **Testes**: Vitest + React Testing Library (unitário/componente), Playwright (E2E)
 - **Catálogo de componentes**: Storybook, com gerador padronizado (`plop`)
-- **Segurança**: cabeçalhos HTTP restritivos (CSP estática sem nonce, HSTS, X-Frame-Options, X-Content-Type-Options),
-  verificação de segredos (`gitleaks`), auditoria de dependências (`npm audit`), rate limiting em memória,
-  validação de entrada com Zod, sessão via cookies estritos (`@supabase/ssr`)
+- **Segurança**: cabeçalhos HTTP restritivos (CSP estática sem nonce, HSTS, X-Frame-Options,
+  X-Content-Type-Options, Referrer-Policy, Permissions-Policy, COOP/CORP), verificação de segredos
+  (`gitleaks`), auditoria de dependências (`npm audit` + `dependency-review-action` no PR), SAST
+  (CodeQL), rate limiting em memória por padrão em `/api/*`, validação de entrada com Zod, sessão
+  via cookies estritos (`@supabase/ssr`)
 - **Banco de dados**: Supabase (Postgres) com Row Level Security default-deny + Drizzle ORM
 - **Variáveis de ambiente**: validação estrita via `@t3-oss/env-nextjs` + Zod
 - **CI/CD**: GitHub Actions (lint/typecheck/test/build, segurança, E2E, Lighthouse CI) + Dependabot semanal
@@ -68,16 +70,38 @@ nome falha em vez de sobrescrever.
 ## Segurança
 
 - Toda resposta HTTP inclui `Content-Security-Policy`, `Strict-Transport-Security`,
-  `X-Frame-Options: DENY` e `X-Content-Type-Options: nosniff` (ver `next.config.ts`). A CSP é
-  estática (sem nonce por requisição) e usa `script-src 'self' 'unsafe-inline'` — o nonce
-  automático documentado pelo Next.js para scripts inline de hidratação não funcionou na prática
-  em testes manuais com esta versão (16.3.4); ver a decisão e o teste documentados em
-  `specs/003-nextjs-boilerplate-hardening/research.md` §11.
+  `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`,
+  `Permissions-Policy` e os headers `Cross-Origin-Opener-Policy`/`Cross-Origin-Resource-Policy`
+  (ver `next.config.ts`). A CSP é estática (sem nonce por requisição) e usa
+  `script-src 'self' 'unsafe-inline'` — o nonce automático documentado pelo Next.js para scripts
+  inline de hidratação não funcionou na prática em testes manuais com esta versão (16.3.4); ver a
+  decisão e o teste documentados em `specs/003-nextjs-boilerplate-hardening/research.md` §11.
 - Commits e Pull Requests são verificados contra vazamento de segredos (`gitleaks`) e vulnerabilidades
-  de dependência High/Critical (`npm audit`), localmente (hook de pre-commit) e no CI.
+  de dependência High/Critical (`npm audit` localmente/no CI + `dependency-review-action` já na
+  abertura do PR), localmente (hook de pre-commit) e no CI.
+- CodeQL analisa o código da aplicação em busca de padrões inseguros (injeção, XSS, etc.) em PRs,
+  push para `develop`/`main` e semanalmente — complementa `gitleaks`/`npm audit`, que não olham para
+  o próprio código.
 - Todo input de usuário é validado com Zod antes de qualquer regra de negócio (ver `app/api/example/route.ts`
   e `contracts/example-route-handler.md` na spec desta feature).
-- Rate limiting em memória protege rotas sensíveis de exemplo (ver `lib/rate-limit.ts`).
+- Rate limiting em memória (`lib/rate-limit.ts`) protege toda rota sob `/api/*` por padrão — uma
+  rota nova já nasce protegida, sem precisar editar `proxy.ts`.
+
+## Performance, SEO e acessibilidade
+
+- O job `lighthouse` do CI roda `@lhci/cli` contra as URLs listadas em `collect.url` de
+  `lighthouserc.json` e falha o pipeline se Performance, Acessibilidade ou SEO ficarem abaixo de
+  0.9. Hoje só a home (`/`) está na lista — **ao adicionar uma rota nova relevante para
+  navegação/SEO, inclua a URL correspondente em `lighthouserc.json`**, ou ela roda sem esse gate.
+- SEO on-page já vem pronto: `app/sitemap.ts`, `app/robots.ts` (com `/api` excluído), metadata
+  canônica, `app/opengraph-image.tsx`, JSON-LD (`components/JsonLd`) e `app/llms.txt` para
+  descoberta por crawlers de IA (GEO).
+- `app/manifest.ts` + `app/icon.tsx`/`app/apple-icon.tsx` geram o Web App Manifest e os ícones do
+  site (favicon/apple-touch-icon) via `next/og` — troque `lib/site-icon.tsx` por um logo real do
+  projeto derivado.
+- Acessibilidade é reforçada estaticamente por `eslint-plugin-jsx-a11y` (modo `strict`) e pelo
+  addon `@storybook/addon-a11y` no catálogo de componentes; o gate de CI para isso hoje é só o
+  score do Lighthouse na(s) URL(s) listada(s) acima.
 
 ## Banco de dados
 

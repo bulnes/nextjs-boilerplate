@@ -75,5 +75,5 @@ export class InMemoryRateLimiter implements RateLimiter {
   }
 }
 
-/** Instância padrão para rotas sensíveis de exemplo: 10 requisições por minuto. */
-export const authRateLimiter = new InMemoryRateLimiter(10, 60_000);
+/** Instância padrão aplicada a toda rota sob /api/* (ver proxy.ts): 10 requisições por minuto. */
+export const apiRateLimiter = new InMemoryRateLimiter(10, 60_000);
