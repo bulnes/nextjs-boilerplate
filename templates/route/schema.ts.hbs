@@ -1,0 +1,7 @@
+import { z } from "zod";
+
+// TODO: defina os campos esperados no corpo de POST /api/{{kebabCase name}}.
+export const {{camelCase name}}BodySchema = z.object({});
+
+/** @public Tipo companheiro do schema, para quem consumir o payload já validado. */
+export type {{pascalCase name}}Body = z.infer<typeof {{camelCase name}}BodySchema>;
