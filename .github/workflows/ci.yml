@@ -8,8 +8,8 @@ on:
 # validação estrita de env (lib/env.ts) durante build/start no CI — nenhuma
 # conexão real ao Supabase é feita neste pipeline (FR-028).
 env:
-  NEXT_PUBLIC_SUPABASE_URL: "https://ci-placeholder.supabase.co"
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: "ci-placeholder-anon-key"
+  SUPABASE_URL: "https://ci-placeholder.supabase.co"
+  SUPABASE_ANON_KEY: "ci-placeholder-anon-key"
   SUPABASE_SERVICE_ROLE_KEY: "ci-placeholder-service-role-key"
   DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
 
