@@ -39,8 +39,7 @@ export default function generators(plop) {
   });
 
   plop.setGenerator("route", {
-    description:
-      "Cria um Route Handler de exemplo (POST) com schema Zod e teste colocados juntos",
+    description: "Cria um Route Handler de exemplo (POST) com schema Zod e teste colocados juntos",
     prompts: [
       {
         type: "input",
