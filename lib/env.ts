@@ -14,6 +14,11 @@ export const env = createEnv({
     DATABASE_URL: z.url(),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   },
-  experimental__runtimeEnv: {},
+  client: {
+    NEXT_PUBLIC_SITE_URL: z.url().optional(),
+  },
+  experimental__runtimeEnv: {
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  },
   emptyStringAsUndefined: true,
 });

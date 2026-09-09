@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Big_Shoulders_Stencil, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { JsonLd } from "@/components/JsonLd/JsonLd";
+import { AUTHOR_NAME, SITE_URL } from "@/lib/site";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,18 +30,24 @@ const stencil = Big_Shoulders_Stencil({
 });
 
 const description =
-  "Boilerplate Next.js de produção: App Router, TypeScript estrito, Tailwind/shadcn, DevSecOps e Supabase prontos para uso.";
+  "Boilerplate Next.js de produção: App Router, React, TypeScript estrito, Tailwind/shadcn, DevSecOps e Supabase prontos para uso.";
+
+const title = "nextjs-boilerplate: Next.js, React, TypeScript e Supabase";
 
 export const metadata: Metadata = {
-  // Ajuste para o domínio real de cada projeto derivado deste boilerplate.
-  metadataBase: new URL("https://example.com"),
+  // Domínio real de cada projeto derivado: sobrescreva via NEXT_PUBLIC_SITE_URL
+  // (ver .env.example e lib/site.ts) em vez de editar este arquivo.
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "nextjs-boilerplate",
+    default: title,
     template: "%s · nextjs-boilerplate",
   },
   description,
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "nextjs-boilerplate",
+    title,
     description,
     type: "website",
     locale: "pt_BR",
@@ -52,7 +61,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} ${stencil.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: AUTHOR_NAME,
+            url: "https://github.com/bulnes",
+            sameAs: ["https://github.com/bulnes"],
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
