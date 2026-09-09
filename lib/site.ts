@@ -9,6 +9,11 @@ export const DEFAULT_SITE_URL = "https://nextjs-boilerplate-mauve-xi-73.vercel.a
 
 export const AUTHOR_NAME = "Bruno Bulnes";
 
+export const SITE_NAME = "nextjs-boilerplate";
+
+export const SITE_DESCRIPTION =
+  "Boilerplate Next.js de produção: App Router, React, TypeScript estrito, Tailwind/shadcn, DevSecOps e Supabase prontos para uso.";
+
 export function resolveSiteUrl(envValue?: string): string {
   return envValue ?? DEFAULT_SITE_URL;
 }

@@ -68,16 +68,33 @@ nome falha em vez de sobrescrever.
 ## Segurança
 
 - Toda resposta HTTP inclui `Content-Security-Policy`, `Strict-Transport-Security`,
-  `X-Frame-Options: DENY` e `X-Content-Type-Options: nosniff` (ver `next.config.ts`). A CSP é
-  estática (sem nonce por requisição) e usa `script-src 'self' 'unsafe-inline'` — o nonce
-  automático documentado pelo Next.js para scripts inline de hidratação não funcionou na prática
-  em testes manuais com esta versão (16.3.4); ver a decisão e o teste documentados em
-  `specs/003-nextjs-boilerplate-hardening/research.md` §11.
+  `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`,
+  `Permissions-Policy` e os headers `Cross-Origin-Opener-Policy`/`Cross-Origin-Resource-Policy`
+  (ver `next.config.ts`). A CSP é estática (sem nonce por requisição) e usa
+  `script-src 'self' 'unsafe-inline'` — o nonce automático documentado pelo Next.js para scripts
+  inline de hidratação não funcionou na prática em testes manuais com esta versão (16.3.4); ver a
+  decisão e o teste documentados em `specs/003-nextjs-boilerplate-hardening/research.md` §11.
 - Commits e Pull Requests são verificados contra vazamento de segredos (`gitleaks`) e vulnerabilidades
   de dependência High/Critical (`npm audit`), localmente (hook de pre-commit) e no CI.
 - Todo input de usuário é validado com Zod antes de qualquer regra de negócio (ver `app/api/example/route.ts`
   e `contracts/example-route-handler.md` na spec desta feature).
 - Rate limiting em memória protege rotas sensíveis de exemplo (ver `lib/rate-limit.ts`).
+
+## Performance, SEO e acessibilidade
+
+- O job `lighthouse` do CI roda `@lhci/cli` contra as URLs listadas em `collect.url` de
+  `lighthouserc.json` e falha o pipeline se Performance, Acessibilidade ou SEO ficarem abaixo de
+  0.9. Hoje só a home (`/`) está na lista — **ao adicionar uma rota nova relevante para
+  navegação/SEO, inclua a URL correspondente em `lighthouserc.json`**, ou ela roda sem esse gate.
+- SEO on-page já vem pronto: `app/sitemap.ts`, `app/robots.ts` (com `/api` excluído), metadata
+  canônica, `app/opengraph-image.tsx`, JSON-LD (`components/JsonLd`) e `app/llms.txt` para
+  descoberta por crawlers de IA (GEO).
+- `app/manifest.ts` + `app/icon.tsx`/`app/apple-icon.tsx` geram o Web App Manifest e os ícones do
+  site (favicon/apple-touch-icon) via `next/og` — troque `lib/site-icon.tsx` por um logo real do
+  projeto derivado.
+- Acessibilidade é reforçada estaticamente por `eslint-plugin-jsx-a11y` (modo `strict`) e pelo
+  addon `@storybook/addon-a11y` no catálogo de componentes; o gate de CI para isso hoje é só o
+  score do Lighthouse na(s) URL(s) listada(s) acima.
 
 ## Banco de dados
 
