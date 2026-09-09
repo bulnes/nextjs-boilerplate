@@ -5,12 +5,16 @@ Tailwind CSS + shadcn/ui, DevSecOps no CI/CD e estrutura de dados via Supabase +
 
 ## Stack
 
-- **Framework**: Next.js (App Router) + React, RSC-first
+- **Framework**: Next.js (App Router) + React, RSC-first, com React Compiler habilitado
+  (memoização automática de componentes/hooks)
 - **Linguagem**: TypeScript (`strict: true`)
 - **Estilo**: Tailwind CSS + shadcn/ui
-- **Qualidade**: ESLint (+ `jsx-a11y` estrito) + Prettier, Husky + lint-staged, `tsc --noEmit`
+- **Qualidade**: ESLint (+ `jsx-a11y` estrito) + Prettier, Husky + lint-staged, `tsc --noEmit`,
+  `knip` (código/dependência morta)
 - **Testes**: Vitest + React Testing Library (unitário/componente), Playwright (E2E)
-- **Catálogo de componentes**: Storybook, com gerador padronizado (`plop`)
+- **Catálogo de componentes**: Storybook, com geradores padronizados (`plop`) de componente e de
+  Route Handler
+- **DX**: `.vscode/` recomendado (ESLint, Prettier, Tailwind CSS IntelliSense; format-on-save)
 - **Segurança**: cabeçalhos HTTP restritivos (CSP estática sem nonce, HSTS, X-Frame-Options,
   X-Content-Type-Options, Referrer-Policy, Permissions-Policy, COOP/CORP), verificação de segredos
   (`gitleaks`), auditoria de dependências (`npm audit` + `dependency-review-action` no PR), SAST
@@ -46,6 +50,8 @@ validação de ambiente (ver `lib/env.ts`).
 | `npm run build`             | Build de produção                                               |
 | `npm run start`             | Sobe o build de produção                                        |
 | `npm run lint`              | ESLint                                                          |
+| `npm run format`            | Formata o repositório com Prettier                              |
+| `npm run format:check`      | Verifica formatação sem alterar arquivos (rodado no CI)         |
 | `npm run typecheck`         | `tsc --noEmit`                                                  |
 | `npm run test`              | Testes unitários/componente (Vitest)                            |
 | `npm run test:watch`        | Vitest em modo watch                                            |
@@ -54,6 +60,9 @@ validação de ambiente (ver `lib/env.ts`).
 | `npm run storybook`         | Catálogo de componentes em `http://localhost:6006`               |
 | `npm run build-storybook`   | Build estático do Storybook                                     |
 | `npm run generate:component -- <Nome>` | Gera um componente padrão (arquivo + teste + story) em `components/<Nome>/` |
+| `npm run generate:route -- <nome>` | Gera um Route Handler (arquivo + schema Zod + teste) em `app/api/<nome>/` |
+| `npm run analyze`           | Analisa o bundle de produção (Turbopack) numa UI interativa      |
+| `npm run knip`              | Detecta arquivo/export/dependência não utilizados                |
 | `npm run db:generate`      | Gera uma migration a partir do schema do Drizzle                |
 | `npm run db:seed`          | Popula/reinicia o estado do banco usado nos testes              |
 
@@ -66,6 +75,18 @@ npm run generate:component -- MeuComponente
 Cria `components/MeuComponente/{MeuComponente.tsx,MeuComponente.test.tsx,MeuComponente.stories.tsx}`
 já passando em lint, typecheck e teste, sem edição adicional. Rodar o comando duas vezes para o mesmo
 nome falha em vez de sobrescrever.
+
+## Criando uma nova rota de API
+
+```bash
+npm run generate:route -- minha-rota
+```
+
+Cria `app/api/minha-rota/route.ts` (POST + validação Zod), `lib/validations/minha-rota.schema.ts`
+e `app/api/minha-rota/route.test.ts`, também já passando em lint, typecheck e teste. O handler
+gerado não assume sessão do Supabase nem persistência — veja `app/api/example/route.ts` como
+referência para isso. Rate limiting já cobre a rota automaticamente (todo `/api/*` é protegido por
+padrão, ver seção Segurança).
 
 ## Segurança
 
@@ -89,6 +110,12 @@ nome falha em vez de sobrescrever.
 
 ## Performance, SEO e acessibilidade
 
+- React Compiler habilitado (`reactCompiler: true` em `next.config.ts` — a opção fica no nível
+  raiz do config desde o Next 16, não em `experimental`) memoiza componentes/hooks automaticamente.
+- `components/WebVitals` reporta Core Web Vitals reais (`useReportWebVitals`) via `lib/logger.ts`
+  — hoje só loga no console do navegador; troque por um envio real a um serviço de RUM em produção.
+- `npm run analyze` roda `next experimental-analyze` (só funciona com Turbopack, o bundler padrão
+  deste projeto — `@next/bundle-analyzer` não é usado aqui por não suportar Turbopack).
 - O job `lighthouse` do CI roda `@lhci/cli` contra as URLs listadas em `collect.url` de
   `lighthouserc.json` e falha o pipeline se Performance, Acessibilidade ou SEO ficarem abaixo de
   0.9. Hoje só a home (`/`) está na lista — **ao adicionar uma rota nova relevante para

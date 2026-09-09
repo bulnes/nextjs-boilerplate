@@ -1,0 +1,27 @@
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+import { logger } from "@/lib/logger";
+import { {{camelCase name}}BodySchema } from "@/lib/validations/{{kebabCase name}}.schema";
+
+/**
+ * Gerado por `npm run generate:route -- {{name}}`. Rate limiting já é
+ * aplicado por padrão a toda rota sob /api/* em proxy.ts (FR-018). Ver
+ * app/api/example/route.ts para o padrão completo com sessão do Supabase
+ * e persistência via Drizzle, se esta rota precisar disso.
+ */
+export async function POST(request: NextRequest) {
+  const rawBody: unknown = await request.json().catch(() => null);
+  const parsed = {{camelCase name}}BodySchema.safeParse(rawBody);
+
+  if (!parsed.success) {
+    logger.warn("{{kebabCase name}}_validation_failed", { issues: parsed.error.issues });
+    return NextResponse.json(
+      { error: "validation_failed", issues: parsed.error.issues },
+      { status: 400 },
+    );
+  }
+
+  logger.info("{{kebabCase name}}_received");
+  return NextResponse.json({ ok: true }, { status: 200 });
+}

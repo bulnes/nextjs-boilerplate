@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["db/drizzle.config.ts"],
+  "ignore": ["components/ui/**"],
+  "ignoreDependencies": ["@base-ui/react", "class-variance-authority"]
+}

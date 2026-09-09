@@ -3,6 +3,7 @@ import { Big_Shoulders_Stencil, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { JsonLd } from "@/components/JsonLd/JsonLd";
+import { WebVitals } from "@/components/WebVitals/WebVitals";
 import { AUTHOR_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${stencil.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <WebVitals />
         <JsonLd
           data={{
             "@context": "https://schema.org",
