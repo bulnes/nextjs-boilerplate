@@ -6,3 +6,6 @@ coverage
 storybook-static
 package-lock.json
 *.md
+# Templates do plop (.hbs) contêm sintaxe Handlebars dentro de arquivos
+# .tsx/.test.tsx — não são TypeScript válido, Prettier não consegue parsear.
+templates/
