@@ -99,9 +99,12 @@ nome falha em vez de sobrescrever.
 - `app/manifest.ts` + `app/icon.tsx`/`app/apple-icon.tsx` geram o Web App Manifest e os ícones do
   site (favicon/apple-touch-icon) via `next/og` — troque `lib/site-icon.tsx` por um logo real do
   projeto derivado.
-- Acessibilidade é reforçada estaticamente por `eslint-plugin-jsx-a11y` (modo `strict`) e pelo
-  addon `@storybook/addon-a11y` no catálogo de componentes; o gate de CI para isso hoje é só o
-  score do Lighthouse na(s) URL(s) listada(s) acima.
+- Acessibilidade é reforçada em três camadas: estaticamente por `eslint-plugin-jsx-a11y` (modo
+  `strict`) e pelo addon `@storybook/addon-a11y` no catálogo de componentes; em teste de componente
+  via `jest-axe` (extensão de tipos manual em `types/jest-axe.d.ts` — `@types/jest-axe` só cobre o
+  namespace do Jest); e no E2E via `@axe-core/playwright`, rodando contra o DOM real da home.
+  `npm run generate:component` já inclui o assert de a11y no componente gerado. O gate de Lighthouse
+  (score ≥ 0.9) continua cobrindo só a(s) URL(s) listada(s) acima.
 
 ## Banco de dados
 
