@@ -3,7 +3,8 @@ import { Big_Shoulders_Stencil, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { JsonLd } from "@/components/JsonLd/JsonLd";
-import { AUTHOR_NAME, SITE_URL } from "@/lib/site";
+import { WebVitals } from "@/components/WebVitals/WebVitals";
+import { AUTHOR_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,9 +30,6 @@ const stencil = Big_Shoulders_Stencil({
   fallback: ["system-ui", "sans-serif"],
 });
 
-const description =
-  "Boilerplate Next.js de produção: App Router, React, TypeScript estrito, Tailwind/shadcn, DevSecOps e Supabase prontos para uso.";
-
 const title = "nextjs-boilerplate: Next.js, React, TypeScript e Supabase";
 
 export const metadata: Metadata = {
@@ -40,15 +38,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: title,
-    template: "%s · nextjs-boilerplate",
+    template: `%s · ${SITE_NAME}`,
   },
-  description,
+  description: SITE_DESCRIPTION,
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title,
-    description,
+    description: SITE_DESCRIPTION,
     type: "website",
     locale: "pt_BR",
     // app/opengraph-image.tsx gera a imagem 1200x630 automaticamente.
@@ -62,6 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${stencil.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <WebVitals />
         <JsonLd
           data={{
             "@context": "https://schema.org",

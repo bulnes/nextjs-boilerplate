@@ -25,6 +25,14 @@ const cspHeader = `
   .trim();
 
 const nextConfig: NextConfig = {
+  // Memoização automática de componentes/hooks (menos useMemo/useCallback
+  // manual). Chave fica no nível raiz do config, não em `experimental`,
+  // desde o Next 16 — conferido em node_modules/next/dist/docs/.../reactCompiler.md
+  // desta versão instalada (16.3.4) antes de configurar, já que a doc do
+  // Next muda rápido entre versões (ver AGENTS.md deste repo). Existe
+  // também um port nativo em Rust (`experimental.turbopackRustReactCompiler`),
+  // mas ainda é experimental; este usa o caminho estável via Babel.
+  reactCompiler: true,
   async headers() {
     return [
       {
@@ -37,6 +45,13 @@ const nextConfig: NextConfig = {
           },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+          },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
         ],
       },
     ];

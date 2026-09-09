@@ -3,6 +3,12 @@ export interface RateLimitResult {
   retryAfterMs: number;
 }
 
+/**
+ * @public Contrato a implementar ao trocar o backing store (ver
+ * InMemoryRateLimiter abaixo) — nenhum código deste repo consome a
+ * interface diretamente além da própria implementação, mas é o ponto de
+ * extensão documentado para produção multi-instância (ex.: Redis/Upstash).
+ */
 export interface RateLimiter {
   check(key: string): RateLimitResult;
 }
@@ -75,5 +81,5 @@ export class InMemoryRateLimiter implements RateLimiter {
   }
 }
 
-/** Instância padrão para rotas sensíveis de exemplo: 10 requisições por minuto. */
-export const authRateLimiter = new InMemoryRateLimiter(10, 60_000);
+/** Instância padrão aplicada a toda rota sob /api/* (ver proxy.ts): 10 requisições por minuto. */
+export const apiRateLimiter = new InMemoryRateLimiter(10, 60_000);

@@ -30,6 +30,8 @@ jobs:
 
       - run: npm run lint
 
+      - run: npm run format:check
+
       - run: npm run typecheck
 
       - run: npm run test
@@ -59,6 +61,21 @@ jobs:
 
       - name: Audita dependências (falha em High/Critical)
         run: npm audit --omit=dev --audit-level=high
+
+  dependency-review:
+    name: Revisão de dependências do PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Bloqueia dependência vulnerável já no PR (falha em High/Critical)
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
 
   lighthouse:
     name: Lighthouse CI (Performance/Acessibilidade/SEO ≥ 90)

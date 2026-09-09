@@ -9,4 +9,5 @@ export const exampleBodySchema = z.object({
   title: z.string().min(1).max(200),
 });
 
+/** @public Tipo companheiro do schema, para quem consumir o payload já validado. */
 export type ExampleBody = z.infer<typeof exampleBodySchema>;
