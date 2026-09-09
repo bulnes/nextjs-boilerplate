@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -126,5 +126,19 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* Acomodação de entrada da placa na home (app/page.tsx) — um único momento
+   orquestrado, não reaplicado por elemento; motion-safe já cobre
+   prefers-reduced-motion. Não anima opacidade: o conteúdo tem que ficar
+   visível mesmo se o clock da animação atrasar (CPU sob carga, aba em
+   background), só o encaixe (scale) é progressivo. */
+@keyframes stamp-in {
+  from {
+    transform: scale(0.98);
+  }
+  to {
+    transform: scale(1);
   }
 }
