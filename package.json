@@ -29,6 +29,7 @@
     "db:migrate": "drizzle-kit migrate --config db/drizzle.config.ts",
     "db:seed": "tsx db/seed.ts",
     "lhci": "lhci autorun",
+    "analyze": "next experimental-analyze",
     "prepare": "husky",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
