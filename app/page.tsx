@@ -103,6 +103,31 @@ export default function Home() {
         </dl>
       </section>
 
+      <section className="mt-14 w-full max-w-2xl">
+        <h2 className="font-(family-name:--font-stencil) text-sm tracking-[0.08em] text-[#8b9096]">
+          O QUE JÁ VEM PRONTO
+        </h2>
+
+        <div className="mt-4 space-y-4 text-sm leading-relaxed text-[#c8c5bc]">
+          <p>
+            Sessão e autenticação usam o Supabase inteiramente no servidor (@supabase/ssr), sem
+            client de browser exposto. O banco roda em Postgres via Drizzle ORM, com Row Level
+            Security padrão-nega — cada tabela nova começa bloqueada até você liberar o acesso
+            explicitamente.
+          </p>
+          <p>
+            Segurança não é um passo extra: Content Security Policy própria, rate limiting nas
+            rotas, validação de entrada com Zod, variáveis de ambiente validadas em build/boot e
+            verificação de segredos com gitleaks já rodam desde o primeiro commit.
+          </p>
+          <p>
+            O CI cobre testes unitários (Vitest), end-to-end (Playwright), catálogo de componentes
+            (Storybook) e orçamento de performance (Lighthouse CI) — em React 19 e TypeScript
+            estrito, sobre Next.js 16 com Turbopack.
+          </p>
+        </div>
+      </section>
+
       <footer className="mt-10 text-center text-xs text-[#8b9096]">
         Licenciado sob MIT. Bruno Bulnes, 2026.
       </footer>
