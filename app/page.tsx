@@ -84,23 +84,23 @@ export default function Home() {
           FICHA TÉCNICA
         </h2>
 
-        <dl className="mt-4 divide-y divide-[#2a2e34] border-y border-[#2a2e34]">
+        <div className="mt-4 divide-y divide-[#2a2e34] border-y border-[#2a2e34]">
           {specSheet.map((row) => (
             <div key={row.label} className="grid gap-2 py-5 sm:grid-cols-[9rem_1fr] sm:gap-6">
-              <dt className="text-sm font-medium text-[#edeae1]">{row.label}</dt>
-              <dd className="flex flex-wrap gap-2">
+              <h3 className="text-sm font-medium text-[#edeae1]">{row.label}</h3>
+              <ul className="flex flex-wrap gap-2">
                 {row.items.map((item) => (
-                  <span
+                  <li
                     key={item}
                     className="rounded-xs border border-[#3a3f46] px-2 py-1 font-mono text-[0.7rem] text-[#c8c5bc]"
                   >
                     {item}
-                  </span>
+                  </li>
                 ))}
-              </dd>
+              </ul>
             </div>
           ))}
-        </dl>
+        </div>
       </section>
 
       <section className="mt-14 w-full max-w-2xl">
@@ -108,23 +108,34 @@ export default function Home() {
           O QUE JÁ VEM PRONTO
         </h2>
 
-        <div className="mt-4 space-y-4 text-sm leading-relaxed text-[#c8c5bc]">
-          <p>
-            Sessão e autenticação usam o Supabase inteiramente no servidor (@supabase/ssr), sem
-            client de browser exposto. O banco roda em Postgres via Drizzle ORM, com Row Level
-            Security padrão-nega — cada tabela nova começa bloqueada até você liberar o acesso
-            explicitamente.
-          </p>
-          <p>
-            Segurança não é um passo extra: Content Security Policy própria, rate limiting nas
-            rotas, validação de entrada com Zod, variáveis de ambiente validadas em build/boot e
-            verificação de segredos com gitleaks já rodam desde o primeiro commit.
-          </p>
-          <p>
-            O CI cobre testes unitários (Vitest), end-to-end (Playwright), catálogo de componentes
-            (Storybook) e orçamento de performance (Lighthouse CI) — em React 19 e TypeScript
-            estrito, sobre Next.js 16 com Turbopack.
-          </p>
+        <div className="mt-4 space-y-5 text-sm leading-relaxed text-[#c8c5bc]">
+          <div>
+            <h3 className="text-sm font-medium text-[#edeae1]">Autenticação e banco de dados</h3>
+            <p className="mt-1">
+              Sessão e autenticação usam o Supabase inteiramente no servidor (@supabase/ssr), sem
+              client de browser exposto. O banco roda em Postgres via Drizzle ORM, com Row Level
+              Security padrão-nega — cada tabela nova começa bloqueada até você liberar o acesso
+              explicitamente.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-[#edeae1]">
+              Segurança desde o primeiro commit
+            </h3>
+            <p className="mt-1">
+              Content Security Policy própria, rate limiting nas rotas, validação de entrada com
+              Zod, variáveis de ambiente validadas em build/boot e verificação de segredos com
+              gitleaks já rodam desde o primeiro commit — segurança não é um passo extra.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-[#edeae1]">Qualidade e CI</h3>
+            <p className="mt-1">
+              O CI cobre testes unitários (Vitest), end-to-end (Playwright), catálogo de componentes
+              (Storybook) e orçamento de performance (Lighthouse CI) — em React 19 e TypeScript
+              estrito, sobre Next.js 16 com Turbopack.
+            </p>
+          </div>
         </div>
       </section>
 
