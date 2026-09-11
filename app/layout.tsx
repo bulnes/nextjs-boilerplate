@@ -43,6 +43,12 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   alternates: {
     canonical: "/",
+    // Site monolíngue (pt-BR): hreflang auto-referenciado + x-default,
+    // sem versões alternativas reais de idioma/região.
+    languages: {
+      "pt-BR": "/",
+      "x-default": "/",
+    },
   },
   openGraph: {
     title,
