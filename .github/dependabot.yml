@@ -4,7 +4,8 @@ updates:
     directory: "/"
     target-branch: "develop"
     schedule:
-      interval: "weekly"
+      interval: "cron"
+      cronjob: "0 9 16 * *"
     versioning-strategy: "increase"
     labels:
       - "dependencies"
@@ -13,7 +14,8 @@ updates:
     directory: "/"
     target-branch: "develop"
     schedule:
-      interval: "weekly"
+      interval: "cron"
+      cronjob: "0 9 16 * *"
     labels:
       - "dependencies"
       - "ci"
