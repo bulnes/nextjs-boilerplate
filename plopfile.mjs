@@ -22,17 +22,17 @@ export default function generators(plop) {
     actions: [
       {
         type: "add",
-        path: "components/{{pascalCase name}}/{{pascalCase name}}.tsx",
+        path: "src/components/{{pascalCase name}}/{{pascalCase name}}.tsx",
         templateFile: "templates/component/Component.tsx.hbs",
       },
       {
         type: "add",
-        path: "components/{{pascalCase name}}/{{pascalCase name}}.test.tsx",
+        path: "src/components/{{pascalCase name}}/{{pascalCase name}}.test.tsx",
         templateFile: "templates/component/Component.test.tsx.hbs",
       },
       {
         type: "add",
-        path: "components/{{pascalCase name}}/{{pascalCase name}}.stories.tsx",
+        path: "src/components/{{pascalCase name}}/{{pascalCase name}}.stories.tsx",
         templateFile: "templates/component/Component.stories.tsx.hbs",
       },
     ],
@@ -56,17 +56,17 @@ export default function generators(plop) {
     actions: [
       {
         type: "add",
-        path: "lib/validations/{{kebabCase name}}.schema.ts",
+        path: "src/lib/validations/{{kebabCase name}}.schema.ts",
         templateFile: "templates/route/schema.ts.hbs",
       },
       {
         type: "add",
-        path: "app/api/{{kebabCase name}}/route.ts",
+        path: "src/app/api/{{kebabCase name}}/route.ts",
         templateFile: "templates/route/route.ts.hbs",
       },
       {
         type: "add",
-        path: "app/api/{{kebabCase name}}/route.test.ts",
+        path: "src/app/api/{{kebabCase name}}/route.test.ts",
         templateFile: "templates/route/route.test.ts.hbs",
       },
     ],

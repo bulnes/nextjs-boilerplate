@@ -40,7 +40,7 @@ npm run dev
 
 Abra [http://localhost:3000](http://localhost:3000). Nenhuma conexão real com o Supabase é necessária
 para rodar localmente — os valores de `.env.example` são placeholders válidos apenas para satisfazer a
-validação de ambiente (ver `lib/env.ts`).
+validação de ambiente (ver `src/lib/env.ts`).
 
 ## Scripts
 
@@ -59,8 +59,8 @@ validação de ambiente (ver `lib/env.ts`).
 | `npm run test:e2e`          | Testes E2E (Playwright, builda e sobe o app automaticamente)     |
 | `npm run storybook`         | Catálogo de componentes em `http://localhost:6006`               |
 | `npm run build-storybook`   | Build estático do Storybook                                     |
-| `npm run generate:component -- <Nome>` | Gera um componente padrão (arquivo + teste + story) em `components/<Nome>/` |
-| `npm run generate:route -- <nome>` | Gera um Route Handler (arquivo + schema Zod + teste) em `app/api/<nome>/` |
+| `npm run generate:component -- <Nome>` | Gera um componente padrão (arquivo + teste + story) em `src/components/<Nome>/` |
+| `npm run generate:route -- <nome>` | Gera um Route Handler (arquivo + schema Zod + teste) em `src/app/api/<nome>/` |
 | `npm run analyze`           | Analisa o bundle de produção (Turbopack) numa UI interativa      |
 | `npm run knip`              | Detecta arquivo/export/dependência não utilizados                |
 | `npm run db:generate`      | Gera uma migration a partir do schema do Drizzle                |
@@ -72,7 +72,7 @@ validação de ambiente (ver `lib/env.ts`).
 npm run generate:component -- MeuComponente
 ```
 
-Cria `components/MeuComponente/{MeuComponente.tsx,MeuComponente.test.tsx,MeuComponente.stories.tsx}`
+Cria `src/components/MeuComponente/{MeuComponente.tsx,MeuComponente.test.tsx,MeuComponente.stories.tsx}`
 já passando em lint, typecheck e teste, sem edição adicional. Rodar o comando duas vezes para o mesmo
 nome falha em vez de sobrescrever.
 
@@ -82,9 +82,9 @@ nome falha em vez de sobrescrever.
 npm run generate:route -- minha-rota
 ```
 
-Cria `app/api/minha-rota/route.ts` (POST + validação Zod), `lib/validations/minha-rota.schema.ts`
-e `app/api/minha-rota/route.test.ts`, também já passando em lint, typecheck e teste. O handler
-gerado não assume sessão do Supabase nem persistência — veja `app/api/example/route.ts` como
+Cria `src/app/api/minha-rota/route.ts` (POST + validação Zod), `src/lib/validations/minha-rota.schema.ts`
+e `src/app/api/minha-rota/route.test.ts`, também já passando em lint, typecheck e teste. O handler
+gerado não assume sessão do Supabase nem persistência — veja `src/app/api/example/route.ts` como
 referência para isso. Rate limiting já cobre a rota automaticamente (todo `/api/*` é protegido por
 padrão, ver seção Segurança).
 
@@ -103,16 +103,16 @@ padrão, ver seção Segurança).
 - CodeQL analisa o código da aplicação em busca de padrões inseguros (injeção, XSS, etc.) em PRs,
   push para `develop`/`main` e semanalmente — complementa `gitleaks`/`npm audit`, que não olham para
   o próprio código.
-- Todo input de usuário é validado com Zod antes de qualquer regra de negócio (ver `app/api/example/route.ts`
+- Todo input de usuário é validado com Zod antes de qualquer regra de negócio (ver `src/app/api/example/route.ts`
   e `contracts/example-route-handler.md` na spec desta feature).
-- Rate limiting em memória (`lib/rate-limit.ts`) protege toda rota sob `/api/*` por padrão — uma
-  rota nova já nasce protegida, sem precisar editar `proxy.ts`.
+- Rate limiting em memória (`src/lib/rate-limit.ts`) protege toda rota sob `/api/*` por padrão — uma
+  rota nova já nasce protegida, sem precisar editar `src/proxy.ts`.
 
 ## Performance, SEO e acessibilidade
 
 - React Compiler habilitado (`reactCompiler: true` em `next.config.ts` — a opção fica no nível
   raiz do config desde o Next 16, não em `experimental`) memoiza componentes/hooks automaticamente.
-- `components/WebVitals` reporta Core Web Vitals reais (`useReportWebVitals`) via `lib/logger.ts`
+- `src/components/WebVitals` reporta Core Web Vitals reais (`useReportWebVitals`) via `src/lib/logger.ts`
   — hoje só loga no console do navegador; troque por um envio real a um serviço de RUM em produção.
 - `npm run analyze` roda `next experimental-analyze` (só funciona com Turbopack, o bundler padrão
   deste projeto — `@next/bundle-analyzer` não é usado aqui por não suportar Turbopack).
@@ -120,15 +120,15 @@ padrão, ver seção Segurança).
   `lighthouserc.json` e falha o pipeline se Performance, Acessibilidade ou SEO ficarem abaixo de
   0.9. Hoje só a home (`/`) está na lista — **ao adicionar uma rota nova relevante para
   navegação/SEO, inclua a URL correspondente em `lighthouserc.json`**, ou ela roda sem esse gate.
-- SEO on-page já vem pronto: `app/sitemap.ts`, `app/robots.ts` (com `/api` excluído), metadata
-  canônica, `app/opengraph-image.tsx`, JSON-LD (`components/JsonLd`) e `app/llms.txt` para
+- SEO on-page já vem pronto: `src/app/sitemap.ts`, `src/app/robots.ts` (com `/api` excluído), metadata
+  canônica, `src/app/opengraph-image.tsx`, JSON-LD (`src/components/JsonLd`) e `src/app/llms.txt` para
   descoberta por crawlers de IA (GEO).
-- `app/manifest.ts` + `app/icon.tsx`/`app/apple-icon.tsx` geram o Web App Manifest e os ícones do
-  site (favicon/apple-touch-icon) via `next/og` — troque `lib/site-icon.tsx` por um logo real do
+- `src/app/manifest.ts` + `src/app/icon.tsx`/`src/app/apple-icon.tsx` geram o Web App Manifest e os ícones do
+  site (favicon/apple-touch-icon) via `next/og` — troque `src/lib/site-icon.tsx` por um logo real do
   projeto derivado.
 - Acessibilidade é reforçada em três camadas: estaticamente por `eslint-plugin-jsx-a11y` (modo
   `strict`) e pelo addon `@storybook/addon-a11y` no catálogo de componentes; em teste de componente
-  via `jest-axe` (extensão de tipos manual em `types/jest-axe.d.ts` — `@types/jest-axe` só cobre o
+  via `jest-axe` (extensão de tipos manual em `src/types/jest-axe.d.ts` — `@types/jest-axe` só cobre o
   namespace do Jest); e no E2E via `@axe-core/playwright`, rodando contra o DOM real da home.
   `npm run generate:component` já inclui o assert de a11y no componente gerado. O gate de Lighthouse
   (score ≥ 0.9) continua cobrindo só a(s) URL(s) listada(s) acima.
@@ -145,18 +145,21 @@ padrão**. Para desenvolvimento com um banco real:
 Row Level Security é habilitado por padrão em modo de negação total (default deny) — ver `supabase/policies/example.sql`.
 Esse RLS protege o acesso feito diretamente via client Supabase (PostgREST, papéis `anon`/`authenticated`). A conexão
 usada pelo Drizzle (`DATABASE_URL`) usa um papel privilegiado do Postgres e **não passa pelo RLS**; nesse caminho,
-a autorização é responsabilidade do código da aplicação (ver a checagem de sessão em `app/api/example/route.ts`).
+a autorização é responsabilidade do código da aplicação (ver a checagem de sessão em `src/app/api/example/route.ts`).
 
 ## Estrutura
 
 ```text
-app/            Rotas, layouts, error/loading/not-found globais, Route Handlers de exemplo
-components/     Componentes de UI (um diretório por componente, com teste e story colocados)
-lib/            Validação de env, logger, rate limiter, clients do Supabase, schemas Zod
+src/            Código-fonte da aplicação (convenção `src` do Next.js)
+src/app/        Rotas, layouts, error/loading/not-found globais, Route Handlers de exemplo
+src/components/ Componentes de UI (um diretório por componente, com teste e story colocados)
+src/lib/        Validação de env, logger, rate limiter, clients do Supabase, schemas Zod
+src/types/      Definições de tipos da aplicação
+src/proxy.ts    Proxy (middleware) executado antes das rotas
 db/             Schema, migrations e seed do Drizzle ORM
 supabase/       Políticas de RLS documentadas
 tests/e2e/      Testes end-to-end (Playwright)
-templates/      Templates do gerador de componentes (plop)
+templates/      Templates dos geradores de componente e rota (plop)
 ```
 
 ## Aprenda mais
